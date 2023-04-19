@@ -1,21 +1,6 @@
 \documentclass{article}
 
-% if you need to pass options to natbib, use, e.g.:
-%     \PassOptionsToPackage{numbers, compress}{natbib}
-% before loading neurips_2020
-
-% ready for submission
-% \usepackage{neurips_2020}
-
-% to compile a preprint version, e.g., for submission to arXiv, add add the
-% [preprint] option:
-\usepackage[preprint]{neurips_2022}
-
-% to compile a camera-ready version, add the [final] option, e.g.:
-%     \usepackage[final]{neurips_2020}
-
-% to avoid loading the natbib package, add option nonatbib:
-%\usepackage[nonatbib]{neurips_2020}
+\usepackage[final]{neurips_2022}
 
 \usepackage[utf8]{inputenc} % allow utf-8 input
 \usepackage[T1]{fontenc}    % use 8-bit T1 fonts
@@ -29,7 +14,7 @@
 
 \title{Methods for Stratego AI}
 
-\author{%
+\author{
   Iain~Found\\
   School of Computer Science\\
   Carleton University\\
@@ -48,21 +33,20 @@
 \maketitle
 
 \begin{abstract}
-% Dummy text, put a real abstract here
 Stratego is an information incomplete board game with a possible $10^{66}$ starting arrangements for any new Stratego game and a game tree complexity of $10^{535}$, far exceeding the complexity of any other board game.
 What separates novice level naïvely implemented Stratego bots from human players is the evaluation of the need to perform computations on a particular board state, as well as the introduction of playstyle variability and bluffing.
 In this paper, we will touch upon five algorithms and their implementations which use varying methods in their setups and executions, as well as their limitations.
 \end{abstract}
 
-\section{Data-Based Stratego Bots }
+\section{Data-Based Stratego Bots}
 
 One realm of Stratego reinforcement learning relies on the data it gathers from the opponent as well as the environment.
 Due to the incomplete information nature of Stratego, one of the aspirations for a data-based algorithm is to explore the unknown grid-map while constantly assessing the risk.
-Expolaratory Stratego bots must also use the information it derives from the playstyle of the opponent to gain an edge in strategical planning.
+Exploratory Stratego bots must also use the information it derives from the playstyle of the opponent to gain an edge in strategical planning.
 
 \subsection{Probabilistic Multi-ply Multi-Agent}
 
-Using probabilities and Bayesian networks, Stankicwicz has focused on opponent modelling [1] to determine the rank of each piece, based on previous games with the same opponent. 
+Using probabilities and Bayesian networks, Stankicwicz had focused on opponent modelling [1] to determine the rank of each piece, based on previous games with the same opponent. 
 The simulated behaviour of the opponent was also considered. A probability distribution is attached to each piece to simulate the behaviour. 
 Modelling the opponent led to correct rank prediction 40\% of the time, compared to only 18\% in case of not using opponent modelling. 
 This higher prediction has led to a 55\% win rate against the opponent without the model of the other player.
@@ -75,7 +59,8 @@ The number of pieces of a particular rank will be associated with that rank in t
 The probability of the agent to choose the rank \textit{r} for the attacked piece of colour \textit{c} $\in$ \{blue,red\} is defined as 
 $$ p_r^c = \frac{i_r}{\sum_{s \in R^c}{i_s}} , \forall r \in R^c $$ where \textit{$i_r$} is the number of pieces of rank \textit{r}, the denominator is the number of remaining pieces of the enemy, 
 \textit{$R^c$} is the set of all ranks of the pieces the enemy has on the board. However, if it is known that the attacked piece of the enemy was moved, then the immobile pieces are not considered anymore: 
-$$ p_{r_m}^c = \frac{i_{r_m}}{\sum_{s \in R^c_m}{i_s}} , \forall r_m \in R^c_m $$ where $R^c_m$ is the set of the ranks of the movable pieces the enemy has left on the board, which leads to: $R^{player}_m$ = $R^{player}$\textbackslash\{F,B\}. 
+$$ p_{r_m}^c = \frac{i_{r_m}}{\sum_{s \in R^c_m}{i_s}} , \forall r_m \in R^c_m $$ where $R^c_m$ is the set of the ranks of the movable pieces the enemy has left on the board, 
+which leads to: $R^{player}_m$ = $R^{player}$\textbackslash\{F,B\} where \textit{F} denotes a Flag and \textit{B} denotes a bomb. 
 
 \subsubsection{Muti-ply Agent}
 
@@ -123,16 +108,16 @@ The advantages and disadvantages of using a plan-based algorithm:
 \begin{itemize}
   \item Advantages:
   \begin{itemize}
-    \item “Unlimited” search depth (4.1).
-    \item Possibilities to bluff (4.2).
-    \item Possibilities to coordinate attacks with multiple pieces. (4.3).
-    \item Focus computation on interesting situations. (4.4).
+    \item “Unlimited” search depth (A.1).
+    \item Possibilities to bluff (A.2).
+    \item Possibilities to coordinate attacks with multiple pieces. (A.3).
+    \item Focus computation on interesting situations. (A.4).
   \end{itemize}
   \item Disadvantages:
   \begin{itemize}
-    \item “Invincible” knows only what it’s told (4.5).
-    \item Comparable information is calculated multiple times (4.6).
-    \item Game specific knowledge needed (4.7).
+    \item “Invincible” knows only what it’s told (A.5).
+    \item Comparable information is calculated multiple times (A.6).
+    \item Game specific knowledge needed (A.7).
   \end{itemize}
 \end{itemize}
 
@@ -155,26 +140,33 @@ Invincible held his own against a varied set of opponents, winning three out of 
 It won the next three games playing more aggressively, capitalizing on human unfamiliarity, and retaining its lead. 
 It lacked the ability to detect the weakness of unusual approaches like the one used in the fifth game. 
 It can never be told everything so there will always be situations that it can’t handle correctly. 
-The idea of using pre-defined plans worked to a degree but it will not be able to defeat high level opponents due to the logic behind pre-generated plans. 
+The idea of using pre-defined plans works to a degree but it will not be able to defeat high level opponents due to the logic behind pre-generated plans. 
 
 \section{Nash Equilibrium Stratego Bots}
 
-Stratego is an example of a two-player zero-sum imperfect information game. Each player has their own policy $\pi_i$, which can be switched at any point during the game (episode). Stratego is a zero-sum game because the sum of the rewards between all players for a given action is 0. Since Stratego is a two-player game, this means that a player receiving a reward $r$ means the other player receives a reward $-r$. A set of policies is in Nash equilibrium if no player can change their current policy to receive a higher reward. This effectively gives an ideal strategy for a given player in a game, so many Stratego bots are based on finding a Nash equilibrium. 
+Stratego is an example of a two-player zero-sum imperfect information game. Each player has their own policy $\pi_i$, which can be switched at any point during the game (episode). 
+Stratego is a zero-sum game because the sum of the rewards between all players for a given action is 0. 
+Since Stratego is a two-player game, this means that a player receiving a reward $r$ means the other player receives a reward $-r$. 
+A set of policies is in Nash equilibrium if no player can change their current policy to receive a higher reward. 
+This effectively gives an ideal strategy for a given player in a game so many Stratego bots are based on finding a Nash equilibrium. 
 
 \subsection{ReBeL}
 
 ReBeL (Recursive Belief-Based Learning) is an algorithm created by Facebook’s AI Research team in 2020, which is designed to converge to the Nash equilibrium of a two-player zero-sum game. 
 ReBeL is an example of an RL+Search algorithm, which simulates intuition by searching the game tree to look ahead in the game and neural networks to make judgments on the value of states to make its next decision. 
-Unlike previous RL+Search algorithms --- such as AlphaZero --- ReBeL is capable of handling imperfect information games. The ReBeL algorithm has been adapted to play a variant of Stratego called Stratego Tiny, which is played on a 4x4 board with 4 pieces per player. [4]
+Unlike previous RL+Search algorithms --- such as AlphaZero --- ReBeL is capable of handling imperfect information games. 
+The ReBeL algorithm has been adapted to play a variant of Stratego called Stratego Tiny, which is played on a 4$\times$4 board with 4 pieces per player. [4]
 
-To handle imperfect information, we can model this information using \textbf{infostates} and \textbf{infosets}. An infostate for a player $i$ is the set of states that cannot be distinguished with the information that player $i$ has. 
+To handle imperfect information, we can model this information using \textbf{infostates} and \textbf{infosets}. 
+An infostate for a player $i$ is the set of states that cannot be distinguished with the information that player $i$ has. 
 An infoset for a player $i$ is an infostate where it is player $i$’s turn to make an action. Strategies for both players are made with respect to their infosets. 
 ReBeL also relies on a public belief state, which is a probability distribution over the histories (nodes in the game tree) that the game could be in. 
 As more information is revealed, the public belief state is updated accordingly. [5]
 
 \subsubsection{Counterfactual Regret Minimization}
 
-Counterfactual Regret Minimization (CFR) is an algorithm that can solve the Nash equilibrium for an imperfect information game. However, it is too slow to use on its own as it requires searching the entire game tree to find the Nash equilibrium. 
+Counterfactual Regret Minimization (CFR) is an algorithm that can solve the Nash equilibrium for an imperfect information game. 
+However, it is too slow to use on its own as it requires searching the entire game tree to find the Nash equilibrium. 
 For a game like Stratego, with a game tree of size $10^{535}$, it’s impractical to use the algorithm alone. Instead, it is used for the search part of RL+Search, up to a given depth of the game-tree. [5]
 
 CFR is built on the idea of regret, which quantifies the desire to have taken another action instead of the current action that was taken. Positive regret means that the other action is prefered over the current action. 
@@ -222,10 +214,13 @@ random & 36/220/0 & 30/226/0 & 15/241/0 & 55/198/3 & 37/219/0 & - \\
 
 ReBeL is trained in belief representation, based on the public belief state. A subgame is constructed with the root at the current state of the game. This game is solved to a certain depth using CFR. 
 The value of each leaf in the game tree is estimated based on the infostate and the belief state with respect to the current policy as input to a neural network.  
-ReBeL was trained with no outside input, relying on self-play to generate the values for each action. Various versions of ReBeL were trained based on CFR depth and percentage of information kept during training. (See Table~\ref{rebel-train})
+ReBeL was trained with no outside input, relying on self-play to generate the values for each action. 
+Various versions of ReBeL were trained based on CFR depth and percentage of information kept during training. (See Table~\ref{rebel-train})
 
-There are 3 things to note from the results (See Table~\ref{rebel-results}). The first is that the player to move first (Player 1) appears to have an advantage compared to other player, winning a larger percentage of games. 
-The second is that larger CFR depths resulted in a higher win rate. This makes sense since this provides more information to make a decision. The third is that more data kept during training did not result in a higher win rate. 
+There are 3 things to note from the results (See Table~\ref{rebel-results}). 
+The first is that the player to move first (Player 1) appears to have an advantage compared to the other player, winning a larger percentage of games. 
+The second is that larger CFR depths resulted in a higher win rate. This makes sense since this provides more information to make a decision. 
+The third is that more data kept during training did not result in a higher win rate. 
 This was unexpected for the author, and they posit that the reason behind this is that the data was somehow overfitting, leading to a more inaccurate network. 
 
 One issue with ReBeL is that it doesn’t scale well. As the game tree grows, running CFR search becomes more costly, to the point of infeasibility. 
@@ -233,7 +228,8 @@ Since Stratego Tiny is smaller than the actual Stratego, it’s unlikely that th
 
 \subsection{Pipeline Policy Space Response Oracles}
 
-Policy Space Response Oracles (PSRO) are a class of algorithms that find an approximate Nash equilibrium for normal-form games. A \textbf{normal-form game} is a tuple $(\Pi, U)$ where $\Pi$ is the set of strategies for each player and $U$ is the table of payoffs (rewards) for each player’s policy. 
+Policy Space Response Oracles (PSRO) are a class of algorithms that find an approximate Nash equilibrium for normal-form games. 
+A \textbf{normal-form game} is a tuple $(\Pi, U)$ where $\Pi$ is the set of strategies for each player and $U$ is the table of payoffs (rewards) for each player’s policy. 
 \textbf{Extensive-form games} contain more information about the game, such as turn-taking. Stratego is an example of an extensive-form game. 
 Extensive-form games can be reduced to normal-form games for the purpose of solving Nash equilibrium. 
 In theory, this would be bad, since turning an extensive-form game into a normal-form game increases the policies exponentially. In practice, this doesn’t make a big difference in performance. [6]
@@ -266,11 +262,12 @@ This is what the current paper addresses.
 
 Pipeline PSRO (P2SRO) is a variant of PSRO that computes multiple policies at once in parallel, increasing the speed at which an approximate Nash equilibrium is reached. 
 P2SRO splits the policies used into two sets: \textbf{fixed} and \textbf{active}. Fixed policies aren’t being actively trained anymore but are still part of the set of policies. 
-Active policies are being trained on all the policies lower than them in the pipeline. Once the lowest active policy reaches a training threshold, it becomes fixed, and a new active policy is added to the end of the pipeline. 
+Active policies are being trained on all the policies lower than them in the pipeline. 
+Once the lowest active policy reaches a training threshold, it becomes fixed, and a new active policy is added to the end of the pipeline. 
 This algorithm lets multiple policies be trained at once and gives new active policies a head start, since they are trained on lower active policies in the pipeline.
 
 An implementation of P2SRO was created with fictitious self-play used to calculate the Nash equilibrium of the current policies and the discrete-action version of Soft Actor-Critic used to find the best response policy. 
-This implementation played Barrage Stratego, which is played on the same 10x10 board as regular Stratego, but with 8 pieces instead of 40.  
+This implementation played Barrage Stratego, which is played on the same 10$\times$10 board as regular Stratego, but with 8 pieces instead of 40.  
 It was tested against various known Stratego bots that can play Barrage Stratego, including some that won past Computer Stratego Championships. 
 After 820,000 episodes, the implementation had a win rate of around 71\% against other bots (See Table~\ref{p2sro-results}). 
 
@@ -321,9 +318,10 @@ Against bots, DeepNash played up to 800 games against various leading Stratego b
 \section{Conclusion}
 When comparing the data-driven approaches to the Nash equilibrium approaches for Stratego, the Nash equilibrium approaches appear to outperform the data-driven approaches. 
 This is likely due to the nature of imperfect information games. The lack of information causes bluffing and deception to be a core part of the games, requiring some amount of novelty in play. 
-Rigid approaches defined by data do not have the flexibility needed to perform these tasks at a high level for a game as complex as Stratego, whereas the Nash equilibrium approaches are formed using self-play, allowing for the necessary flexibility to arise naturally. 
+Rigid approaches defined by data do not have the flexibility needed to perform these tasks at a high level for a game as complex as Stratego, 
+whereas the Nash equilibrium approaches are formed using self-play, allowing for the necessary flexibility to arise naturally. 
 
-Among the Nash equilibrium approaches ReBeL is unable to scale for larger problems, which makes it an issue for practical applications.  
+Among the Nash equilibrium approaches, ReBeL is unable to scale for larger problems, which makes it an issue for practical applications.  
 Between P2SRO and DeepNash, while they haven’t played against each other, they have played against similar bots, and in that respect, DeepNash comes out on top. 
 However, this may be due to DeepMind, the creators of DeepNash, having more funding and computing power compared to the researchers who made P2SRO. 
 For further research, comparing P2SRO against DeepNash seems like a good approach. Getting some human tests against P2SRO would also help make a fairer comparison. 
@@ -353,16 +351,16 @@ Lastly, it would be interesting to see how DeepNash fares against top players in
 
 \begin{enumerate}
   \item Advantage: “Unlimited” search depth: The search depth is unlimited because the depth is defined by the useful depth to detect and complete a plan. 
-  Because of the directional rather than exhaustive search this depth can easily be reached. 
+  Because of the directional rather than exhaustive search, this depth can easily be reached. 
   This is a relatively small search problem that can easily be performed thousands of times without noticeable delay on modern hardware 
   \item Advantage: Possibilities to bluff: Bluffing can be implemented by defining what makes moves good for bluffing. Usually this means performing a normal plan with the wrong pieces. 
   If “Invincible” can find a piece of which the opponent may believe it is the right piece for a certain plan and he uses it for that plan, then the opponent's belief that this piece has a rank when in reality it doesn’t have is strengthened. 
-  This behavior is easy to implement when moves are chosen based on plans but very hard/impossible to include in a system that finds all the effects of a limited sequence of moves. 
+  This behavior is easy to implement when moves are chosen based on plans but very hard/impossible to include in a system that finds all the effects of a limited sequence of moves
   \item Advantage: Possibilities to coordinate attacks with multiple pieces: 
   There are not many things in Stratego that a single piece can do, but plans that require multiple pieces generally also require many more moves. 
   An exhaustive search of 12 plies allows to find plans that require 1 piece to move 6 fields, or 2 pieces to move 3 fields. 
   That means both pieces must be already very close to where they are needed before a combination that requires these pieces can be found. 
-  If this is defined as a plan, then this plan can find the location of the required pieces and guide them where they have to be also as a search over a 10x10 graph. 
+  If this is defined as a plan, then this plan can find the location of the required pieces and guide them where they have to be also as a search over a 10$\times$10 graph
   \item Advantage: Focus computation on interesting situations: 
   The computational is used more specifically for computing interesting aspects of a board position rather than for computing all the possible move sequences, out of which most are not going to be interesting 
   \item Disadvantage: “Invincible” knows only what it is told: Because there is no exhaustive search, everything that is not formulated as a plan will be completely ignored. 
